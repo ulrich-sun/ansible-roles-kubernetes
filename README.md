@@ -1,5 +1,7 @@
-# ansible-role-kubernetes
 
+[![Publish to Ansible Galaxy](https://github.com/ulrich-sun/ansible-roles-kubernetes/actions/workflows/publish.yaml/badge.svg)](https://github.com/ulrich-sun/ansible-roles-kubernetes/actions/workflows/publish.yaml)
+
+# ansible-role-kubernetes
 Rôle Ansible pour déployer un cluster Kubernetes (master + worker) avec containerd.
 
 ## Installation
