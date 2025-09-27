@@ -10,7 +10,7 @@
 
 - name: Configuration Master
   include_tasks: master.yaml
-  when: kubernetes_role == "control_plane"
+  when: kubernetes_role == "master"
 
 - name: Configuration Worker
   include_tasks: worker.yaml
