@@ -1,0 +1,10 @@
+---
+- name: Attendre que la commande join existe
+  wait_for:
+    path: "{{ join_command_file }}"
+    timeout: 300
+  become: yes
+
+- name: Joindre le cluster
+  command: "bash {{ join_command_file }} --cri-socket={{ cri_socket }}"
+  become: yes

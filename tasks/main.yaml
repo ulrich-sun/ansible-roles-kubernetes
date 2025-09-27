@@ -1,0 +1,17 @@
+---
+- name: Vérification installation existante
+  include_tasks: prerequisites.yml
+
+- name: Installation containerd
+  include_tasks: containerd.yml
+
+- name: Installation composants Kubernetes
+  include_tasks: kube.yml
+
+- name: Configuration Master
+  include_tasks: master.yml
+  when: inventory_hostname == "master"
+
+- name: Configuration Worker
+  include_tasks: worker.yml
+  when: "'worker' in inventory_hostname"

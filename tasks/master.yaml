@@ -1,0 +1,36 @@
+---
+- name: Initialiser le cluster master
+  command: >
+    kubeadm init
+    --apiserver-advertise-address={{ ansible_host }}
+    --pod-network-cidr={{ pod_network_cidr }}
+    --cri-socket={{ cri_socket }}
+    --kubernetes-version={{ k8s_version }}
+  args:
+    creates: /etc/kubernetes/admin.conf
+  become: yes
+
+- name: Copier config kube pour root
+  command: "{{ item }}"
+  with_items:
+    - mkdir -p /root/.kube
+    - cp -i /etc/kubernetes/admin.conf /root/.kube/config
+  become: yes
+
+- name: Copier config kube pour vagrant
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/vagrant/.kube/config
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
+  become: yes
+
+- name: Générer commande join
+  shell: "grep 'kubeadm join' /root/.kube/config -A 2 > {{ join_command_file }}"
+  become: yes
+
+- name: Installer CNI Flannel
+  kubernetes.core.k8s:
+    state: present
+    src: https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml

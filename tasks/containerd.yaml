@@ -1,0 +1,25 @@
+---
+- name: Installer containerd
+  apt:
+    name: containerd.io
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Générer configuration par défaut
+  command: containerd config default
+  register: containerd_config
+  become: yes
+
+- name: Configurer containerd
+  copy:
+    dest: /etc/containerd/config.toml
+    content: "{{ containerd_config.stdout | regex_replace('SystemdCgroup = false', 'SystemdCgroup = true') }}"
+  become: yes
+
+- name: Activer containerd
+  systemd:
+    name: containerd
+    enabled: yes
+    state: restarted
+  become: yes

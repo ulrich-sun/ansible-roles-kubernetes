@@ -1,0 +1,35 @@
+---
+- name: Ajouter dépôt Kubernetes
+  apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] {{ k8s_repo_url }} /"
+    state: present
+  become: yes
+
+- name: Télécharger clé GPG Kubernetes
+  get_url:
+    url: "{{ k8s_repo_url }}Release.key"
+    dest: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    mode: '0644'
+  become: yes
+
+- name: Installer kubelet, kubeadm, kubectl
+  apt:
+    name:
+      - "kubelet={{ k8s_deb_version }}"
+      - "kubeadm={{ k8s_deb_version }}"
+      - "kubectl={{ k8s_deb_version }}"
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Mettre en hold kubelet, kubeadm, kubectl
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    allow_downgrade: yes
+  loop:
+    - kubelet
+    - kubeadm
+    - kubectl
+  become: yes

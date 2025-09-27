@@ -1,0 +1,15 @@
+---
+# Version Kubernetes
+k8s_version: "1.33.0"
+k8s_deb_version: "{{ k8s_version }}-1.1"
+k8s_repo_version: "v{{ k8s_version.split('.')[0] }}.{{ k8s_version.split('.')[1] }}"
+k8s_repo_url: "https://pkgs.k8s.io/core:/stable:/{{ k8s_repo_version }}/deb/"
+
+# Réseau et runtime
+cri_socket: "unix:///var/run/containerd/containerd.sock"
+pod_network_cidr: "10.244.0.0/16"
+k8s_interface: "enp0s8"
+
+# Fichiers
+join_command_file: "/vagrant/join-command.sh"
+kubeadm_log: "kubeadm-init.log"
