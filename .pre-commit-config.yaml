@@ -1,0 +1,16 @@
+repos:
+  # Vérifie la syntaxe YAML
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-merge-conflict
+      - id: check-added-large-files
+
+  # Vérifie la syntaxe Ansible
+  - repo: https://github.com/ansible-community/ansible-lint
+    rev: v24.7.0
+    hooks:
+      - id: ansible-lint

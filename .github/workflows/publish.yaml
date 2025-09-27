@@ -4,7 +4,7 @@ on:
   push:
     tags:
       - "v*.*.*"   # déclenche sur release tag, ex: v1.0.0
-  workflow_dispatch:   # possibilité de lancer manuellement
+  workflow_dispatch:
 
 jobs:
   publish:
@@ -25,6 +25,7 @@ jobs:
       - name: Import role to Galaxy
         env:
           ANSIBLE_GALAXY_API_KEY: ${{ secrets.ANSIBLE_GALAXY_API_KEY }}
+          ANSIBLE_GALAXY_USER: ${{ secrets.ANSIBLE_GALAXY_USER }}
         run: |
           ansible-galaxy role import \
             $ANSIBLE_GALAXY_USER \
