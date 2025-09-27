@@ -25,6 +25,7 @@
   apt_repository:
     repo: "deb [trusted=yes] {{ k8s_repo_url }} /"
     state: present
+    filename: kubernetes.list
     update_cache: yes
   become: yes
 
