@@ -10,8 +10,8 @@
 
 - name: Configuration Master
   include_tasks: master.yaml
-  when: inventory_hostname == "master"
+  when: kubernetes_role == "master"
 
 - name: Configuration Worker
   include_tasks: worker.yaml
-  when: "'worker' in inventory_hostname"
+  when: kubernetes_role == "worker"

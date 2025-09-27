@@ -13,3 +13,5 @@ k8s_interface: "enp0s8"
 # Fichiers
 join_command_file: "/vagrant/join-command.sh"
 kubeadm_log: "kubeadm-init.log"
+
+kubernetes_role: master 
