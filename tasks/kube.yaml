@@ -1,7 +1,7 @@
 ---
 # roles/kubernetes/tasks/main.yml
 
-# Créer le dossier pour stocker la clé GPG
+# 1️⃣ Créer le dossier pour stocker la clé (optionnel)
 - name: Créer dossier pour keyrings
   file:
     path: /etc/apt/keyrings
@@ -9,30 +9,31 @@
     mode: '0755'
   become: yes
 
-# Ajouter la clé GPG officielle Kubernetes
+# 2️⃣ Télécharger et installer la clé GPG officielle Kubernetes
 - name: Ajouter clé GPG Kubernetes
-  ansible.builtin.apt_key:
-    url: "{{ k8s_repo_url }}Release.key"
-    state: present
+  ansible.builtin.get_url:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    dest: /etc/apt/trusted.gpg.d/kubernetes-archive-keyring.gpg
+    mode: '0644'
   become: yes
 
-# Supprimer ancien dépôt Kubernetes si présent
+# 3️⃣ Supprimer ancien dépôt Kubernetes s’il existe
 - name: Supprimer ancien dépôt Kubernetes si présent
   file:
     path: /etc/apt/sources.list.d/kubernetes.list
     state: absent
   become: yes
 
-# Ajouter le dépôt Kubernetes avec la clé GPG
+# 4️⃣ Ajouter le dépôt Kubernetes avec signed-by
 - name: Ajouter dépôt Kubernetes
   apt_repository:
-    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/kubernetes-archive-keyring.gpg] {{ k8s_repo_url }} /"
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/kubernetes-archive-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /"
     state: present
     filename: kubernetes.list
     update_cache: yes
   become: yes
 
-# Installer kubelet, kubeadm, kubectl
+# 5️⃣ Installer kubeadm, kubelet, kubectl
 - name: Installer kube packages
   apt:
     name:
@@ -43,7 +44,7 @@
     update_cache: yes
   become: yes
 
-# Hold des packages pour éviter les mises à jour automatiques
+# 6️⃣ Mettre les packages en hold
 - name: Hold kube packages
   ansible.builtin.command: "echo '{{ item }} hold' | sudo dpkg --set-selections"
   loop:
