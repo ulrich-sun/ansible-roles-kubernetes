@@ -27,7 +27,7 @@
     state: present
     update_cache: yes
   become: yes
-  
+
 - name: Installer kubelet, kubeadm, kubectl
   apt:
     name:
@@ -37,13 +37,10 @@
     state: present
   become: yes
 
-- name: Mettre en hold kubelet, kubeadm, kubectl
-  apt:
-    name: "{{ item }}"
-    state: present
-    hold: yes
+- name: Hold kube packages
+  ansible.builtin.command: "echo '{{ item }} hold' | sudo dpkg --set-selections"
   loop:
     - kubelet
     - kubeadm
     - kubectl
-  become: yes
+
