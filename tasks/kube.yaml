@@ -15,13 +15,19 @@
     mode: '0644'
   become: yes
 
-- name: Ajouter dépôt Kubernetes
+# - name: Ajouter dépôt Kubernetes
+#   apt_repository:
+#     repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] {{ k8s_repo_url }} /"
+#     state: present
+#     update_cache: yes
+#   become: yes
+- name: Ajouter dépôt Kubernetes (trusted=yes)
   apt_repository:
-    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] {{ k8s_repo_url }} /"
+    repo: "deb [trusted=yes] {{ k8s_repo_url }} /"
     state: present
     update_cache: yes
   become: yes
-
+  
 - name: Installer kubelet, kubeadm, kubectl
   apt:
     name:
