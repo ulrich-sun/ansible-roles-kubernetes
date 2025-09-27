@@ -1,23 +1,56 @@
 ---
-- name: Installer containerd
+# roles/kubernetes/tasks/main.yml
+
+- name: Installer les pré-requis pour le dépôt Docker
   apt:
-    name: containerd.io
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
     state: present
     update_cache: yes
   become: yes
 
-- name: Générer configuration par défaut
+- name: Ajouter la clé GPG Docker
+  ansible.builtin.shell: |
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  args:
+    creates: /usr/share/keyrings/docker-archive-keyring.gpg
+  become: yes
+
+- name: Ajouter le dépôt Docker
+  ansible.builtin.shell: |
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+    | tee /etc/apt/sources.list.d/docker.list > /dev/null
+  args:
+    creates: /etc/apt/sources.list.d/docker.list
+  become: yes
+
+- name: Mettre à jour la liste des paquets
+  apt:
+    update_cache: yes
+  become: yes
+
+- name: Installer containerd.io
+  apt:
+    name: containerd.io
+    state: present
+  become: yes
+
+- name: Générer configuration par défaut de containerd
   command: containerd config default
   register: containerd_config
   become: yes
 
-- name: Configurer containerd
+- name: Configurer containerd (SystemdCgroup = true)
   copy:
     dest: /etc/containerd/config.toml
     content: "{{ containerd_config.stdout | regex_replace('SystemdCgroup = false', 'SystemdCgroup = true') }}"
   become: yes
 
-- name: Activer containerd
+- name: Redémarrer et activer containerd
   systemd:
     name: containerd
     enabled: yes
