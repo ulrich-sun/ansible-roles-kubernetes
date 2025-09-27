@@ -5,6 +5,9 @@ k8s_deb_version: "{{ k8s_version }}-1.1"
 k8s_repo_version: "v{{ k8s_version.split('.')[0] }}.{{ k8s_version.split('.')[1] }}"
 k8s_repo_url: "https://pkgs.k8s.io/core:/stable:/{{ k8s_repo_version }}/deb/"
 
+k8s_keyring_path: "/usr/share/keyrings/kubernetes-archive-keyring.gpg"
+
+
 # Réseau et runtime
 cri_socket: "unix:///var/run/containerd/containerd.sock"
 pod_network_cidr: "10.244.0.0/16"
