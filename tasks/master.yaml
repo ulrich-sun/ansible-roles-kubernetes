@@ -2,7 +2,7 @@
 - name: Initialiser le cluster master
   command: >
     kubeadm init
-    --apiserver-advertise-address={{ ansible_host }}
+    --apiserver-advertise-address={{ kubernetes_apiserver_advertise_address }}
     --pod-network-cidr={{ pod_network_cidr }}
     --cri-socket={{ cri_socket }}
     --kubernetes-version={{ k8s_version }}
