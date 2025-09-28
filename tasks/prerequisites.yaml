@@ -23,12 +23,24 @@
     update_cache: yes
   become: yes
 
-- name: Configurer modules kernel
+# 🔹 Charger immédiatement les modules (sinon il faut reboot)
+- name: Charger modules kernel nécessaires
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - overlay
+    - br_netfilter
+  become: yes
+
+# 🔹 S'assurer qu'ils sont persistants au reboot
+- name: Configurer modules kernel persistants
   copy:
     dest: /etc/modules-load.d/k8s.conf
     content: |
       overlay
       br_netfilter
+  mode: '0644'
   become: yes
 
 - name: Configurer sysctl
@@ -38,6 +50,7 @@
       net.bridge.bridge-nf-call-iptables=1
       net.bridge.bridge-nf-call-ip6tables=1
       net.ipv4.ip_forward=1
+  mode: '0644'
   become: yes
 
 - name: Appliquer sysctl
