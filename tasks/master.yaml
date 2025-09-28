@@ -45,7 +45,12 @@
     content: "{{ join_cmd.stdout }}"
   become: yes
 
-- name: Installer CNI Flannel
-  kubernetes.core.k8s:
-    state: present
-    src: https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+# - name: Installer CNI Flannel
+#   kubernetes.core.k8s:
+#     state: present
+#     src: https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+
+- name: Installer CNI Flannel avec kubectl
+  command: >
+    kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+  become: yes
