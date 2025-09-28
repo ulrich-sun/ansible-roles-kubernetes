@@ -1,4 +1,3 @@
----
 - name: Initialiser le cluster master
   command: >
     kubeadm init
@@ -17,6 +16,15 @@
     - cp -i /etc/kubernetes/admin.conf /root/.kube/config
   become: yes
 
+- name: Créer le répertoire .kube pour vagrant
+  file:
+    path: /home/vagrant/.kube
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: '0755'
+  become: yes
+
 - name: Copier config kube pour vagrant
   copy:
     src: /etc/kubernetes/admin.conf
@@ -26,8 +34,15 @@
     mode: '0644'
   become: yes
 
-- name: Générer commande join
-  shell: "grep 'kubeadm join' /root/.kube/config -A 2 > {{ join_command_file }}"
+- name: Générer la commande join
+  shell: kubeadm token create --print-join-command
+  register: join_cmd
+  become: yes
+
+- name: Sauvegarder la commande join dans un fichier partagé
+  copy:
+    dest: "{{ join_command_file }}"
+    content: "{{ join_cmd.stdout }}"
   become: yes
 
 - name: Installer CNI Flannel
