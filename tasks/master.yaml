@@ -7,14 +7,14 @@
     --kubernetes-version={{ k8s_version }}
   args:
     creates: /etc/kubernetes/admin.conf
-  become: yes
+  become: true
 
 - name: Copier config kube pour root
   command: "{{ item }}"
   with_items:
     - mkdir -p /root/.kube
     - cp -i /etc/kubernetes/admin.conf /root/.kube/config
-  become: yes
+  become: true
 
 - name: Créer le répertoire .kube pour vagrant
   file:
@@ -23,7 +23,7 @@
     owner: vagrant
     group: vagrant
     mode: '0755'
-  become: yes
+  become: true
 
 - name: Copier config kube pour vagrant
   copy:
@@ -32,18 +32,18 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
-  become: yes
+  become: true
 
 - name: Générer la commande join
   shell: kubeadm token create --print-join-command
   register: join_cmd
-  become: yes
+  become: true
 
 - name: Sauvegarder la commande join dans un fichier partagé
   copy:
     dest: "{{ join_command_file }}"
     content: "{{ join_cmd.stdout }}"
-  become: yes
+  become: true
 
 # - name: Installer CNI Flannel
 #   kubernetes.core.k8s:
@@ -53,4 +53,4 @@
 - name: Installer CNI Flannel avec kubectl
   command: >
     kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
-  become: yes
+  become: true

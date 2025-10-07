@@ -5,14 +5,14 @@
     curl -fsSL {{ k8s_repo_url }}Release.key | gpg --dearmor -o {{ k8s_keyring_path }}
   args:
     creates: "{{ k8s_keyring_path }}"
-  become: yes
+  become: true
 
 # 2️⃣ Supprimer ancien dépôt Kubernetes si présent
 - name: Supprimer ancien dépôt Kubernetes
   file:
     path: /etc/apt/sources.list.d/kubernetes.list
     state: absent
-  become: yes
+  become: true
 
 # 3️⃣ Ajouter dépôt Kubernetes variabilisé
 - name: Ajouter dépôt Kubernetes
@@ -20,13 +20,13 @@
     echo "deb [signed-by={{ k8s_keyring_path }}] {{ k8s_repo_url }} /" | tee /etc/apt/sources.list.d/kubernetes.list
   args:
     creates: /etc/apt/sources.list.d/kubernetes.list
-  become: yes
+  become: true
 
 # 4️⃣ Mettre à jour cache APT
 - name: Mettre à jour cache APT
   ansible.builtin.apt:
     update_cache: yes
-  become: yes
+  become: true
 
 # 5️⃣ Installer kube packages avec version variabilisée
 - name: Installer kube packages
@@ -37,7 +37,7 @@
       - "kubectl={{ k8s_deb_version }}"
     state: present
     update_cache: yes
-  become: yes
+  become: true
 
 # 6️⃣ Hold des packages
 - name: Hold kube packages
@@ -46,4 +46,4 @@
     - kubelet
     - kubeadm
     - kubectl
-  become: yes
+  become: true

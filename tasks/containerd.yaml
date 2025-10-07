@@ -11,14 +11,14 @@
       - lsb-release
     state: present
     update_cache: yes
-  become: yes
+  become: true
 
 - name: Ajouter la clé GPG Docker
   ansible.builtin.shell: |
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
   args:
     creates: /usr/share/keyrings/docker-archive-keyring.gpg
-  become: yes
+  become: true
 
 - name: Ajouter le dépôt Docker
   ansible.builtin.shell: |
@@ -26,33 +26,33 @@
     | tee /etc/apt/sources.list.d/docker.list > /dev/null
   args:
     creates: /etc/apt/sources.list.d/docker.list
-  become: yes
+  become: true
 
 - name: Mettre à jour la liste des paquets
   apt:
     update_cache: yes
-  become: yes
+  become: true
 
 - name: Installer containerd.io
   apt:
     name: containerd.io
     state: present
-  become: yes
+  become: true
 
 - name: Générer configuration par défaut de containerd
   command: containerd config default
   register: containerd_config
-  become: yes
+  become: true
 
 - name: Configurer containerd (SystemdCgroup = true)
   copy:
     dest: /etc/containerd/config.toml
     content: "{{ containerd_config.stdout | regex_replace('SystemdCgroup = false', 'SystemdCgroup = true') }}"
-  become: yes
+  become: true
 
 - name: Redémarrer et activer containerd
   systemd:
     name: containerd
     enabled: yes
     state: restarted
-  become: yes
+  become: true

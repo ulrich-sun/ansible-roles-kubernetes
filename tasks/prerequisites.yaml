@@ -1,14 +1,14 @@
 ---
 - name: Désactiver swap temporairement
   command: swapoff -a
-  become: yes
+  become: true
 
 - name: Désactiver swap définitivement
   replace:
     path: /etc/fstab
     regexp: '(^.*swap.*$)'
     replace: '# \1'
-  become: yes
+  become: true
 
 - name: Installer prérequis
   apt:
@@ -21,14 +21,14 @@
       - socat
     state: present
     update_cache: yes
-  become: yes
+  become: true
 
 # 🔹 Charger les modules kernel immédiatement
 - name: Charger les modules kernel overlay et br_netfilter
   shell: |
     modprobe overlay
     modprobe br_netfilter
-  become: yes
+  become: true
 
 # 🔹 Configurer modules kernel persistants
 - name: Modules kernel persistants
@@ -40,7 +40,7 @@
     owner: root
     group: root
     mode: '0644'
-  become: yes
+  become: true
 
 # 🔹 Configurer les paramètres sysctl
 - name: Configurer sysctl pour Kubernetes
@@ -53,8 +53,8 @@
     owner: root
     group: root
     mode: '0644'
-  become: yes
+  become: true
 
 - name: Appliquer sysctl
   command: sysctl --system
-  become: yes
+  become: true
